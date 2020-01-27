@@ -140,17 +140,30 @@ function libxml2.xmlCreatePushParserCtxt(filename)
   return ffi.gc(context, xml2.xmlFreeParserCtxt)
 end
 
-function libxml2.xmlCtxtReadMemory(context, xml, options)
+function libxml2.xmlCtxtReadMemory(context, xml, options, extra_parse_options)
   local url = nil
   local encoding = nil
+  local parse_options = nil
+
   if options then
     url = options.url
     encoding = options.encoding
   end
-  local parse_options = bit.bor(ffi.C.XML_PARSE_RECOVER,
-                                ffi.C.XML_PARSE_NOERROR,
-                                ffi.C.XML_PARSE_NOWARNING,
-                                ffi.C.XML_PARSE_NONET)
+
+  if extra_parse_options == nil then
+    parse_options = bit.bor(ffi.C.XML_PARSE_RECOVER,
+                            ffi.C.XML_PARSE_NOERROR,
+                            ffi.C.XML_PARSE_NOWARNING,
+                            ffi.C.XML_PARSE_NONET)
+  else
+    parse_options = bit.bor(ffi.C.XML_PARSE_RECOVER,
+                            ffi.C.XML_PARSE_NOERROR,
+                            ffi.C.XML_PARSE_NOWARNING,
+                            ffi.C.XML_PARSE_NONET,
+                            extra_parse_options)
+  end
+
+
   local document = xml2.xmlCtxtReadMemory(context,
                                           xml,
                                           #xml,

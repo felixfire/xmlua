@@ -10,12 +10,12 @@ function XML.build(tree)
   return Document.build(raw_document, tree)
 end
 
-function XML.parse(xml, options)
+function XML.parse(xml, options, extra_parse_options)
   local context = libxml2.xmlNewParserCtxt()
   if not context then
     error("Failed to create context to parse XML")
   end
-  local document = libxml2.xmlCtxtReadMemory(context, xml)
+  local document = libxml2.xmlCtxtReadMemory(context, xml, options, extra_parse_options)
   if context.lastError.message ~= ffi.NULL then
     if context.lastError.message == ffi.NULL then
       error("Failed to parse XML")
